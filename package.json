@@ -8,7 +8,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "rm -rf build docs && react-scripts build && mv build docs"
+    "build": "rm -rf build docs && react-scripts build && mv build docs && touch docs/.nojekyll"
   },
   "eslintConfig": {
     "extends": [
