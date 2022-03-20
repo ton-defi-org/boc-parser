@@ -1,0 +1,2 @@
+(this["webpackJsonpboc-parser"]=this["webpackJsonpboc-parser"]||[]).push([[0],{11:function(e,c,r){"use strict";r.r(c);r(1);var n=r(3),s=r.n(n),t=(r(8),r(9),r(0));var a=function(){return Object(t.jsx)("div",{className:"App",children:Object(t.jsx)("header",{className:"App-header",children:Object(t.jsx)("p",{children:"hello world"})})})};s.a.render(Object(t.jsx)(a,{}),document.getElementById("root"))},8:function(e,c,r){},9:function(e,c,r){}},[[11,1,2]]]);
+//# sourceMappingURL=main.039e5f86.chunk.js.map
