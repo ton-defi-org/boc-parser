@@ -6,7 +6,7 @@ Web tool that helps to fetch and validate transfer transaction data from a boc f
 
 ## Usage and Expected result
 
-Please choose a `transfer` boc file and load it through https://ton-factory.github.io/boc-parser/.
+Please choose a `transfer` boc file and load it through https://ton-defi-org.github.io/boc-parser/
 
 The expected result will look like:
 
