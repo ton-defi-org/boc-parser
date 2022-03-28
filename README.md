@@ -1,19 +1,30 @@
 # BOC Parser
 
-Web tool that helps to fetch and validate transfer transaction data from a boc file.
+Web tool to help parse TON blockchain BOC files to double-check their content before sending to mainnet.
 
-**Note: this tool will show only flags, destation address and amount**
+## Usage
 
-## Usage and Expected result
+1. Open the parser website (available on https://ton-defi-org.github.io/boc-parser/)
 
-Please choose a `transfer` boc file and load it through https://ton-defi-org.github.io/boc-parser/
+2. Open the BOC file to parse through the UI.
 
-The expected result will look like:
+3. Example successful output:
 
-```bash
+```
 flags 18
 EQBP4mzpDIywL1SV-Wp9ZuBBlzprR9eXQgSYGEXiUEHm7yYF
 50000000
 ```
 
 To reload a new boc file please refresh the page.
+
+## Development
+
+To build a new version of the website and deploy to GitHub pages:
+
+```
+npm install
+npm run build
+```
+
+The build output will be found in the `./docs` directory. By pushing everything to master, the `./docs` directory will be pushed as well and GitHub pages will be deployed.
