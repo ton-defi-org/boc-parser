@@ -40,7 +40,7 @@ function App() {
                     <input ref={file} type="file" onChange={onFileChange}></input>
                     <p>Flags: <pre id="flags"></pre></p>
                     <p>Destation address: <pre id="dest"></pre></p>
-                    <p>Amount:  <pre id="amount"></pre></p>
+                    <p>Amount: <pre id="amount"></pre></p>
                 </div>
                 <p>
                     
