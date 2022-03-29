@@ -42,9 +42,7 @@ function App() {
                     <p>Destation address: <pre id="dest"></pre></p>
                     <p>Amount: <pre id="amount"></pre></p>
                 </div>
-                <p>
-                    
-                </p>
+                
             </header>
         </div>
     );
