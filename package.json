@@ -3,12 +3,15 @@
   "version": "0.1.0",
   "homepage": "https://orbs-network.github.io/boc-parser",
   "dependencies": {
+    "bignumber.js": "^9.0.2",
+    "buffer": "6.x",
     "react": "17.x",
+    "react-app-polyfill": "3.x",
     "react-dom": "17.x",
+    "react-dropzone": "^12.0.4",
     "react-scripts": "4.x",
     "ton": "9.x",
-    "buffer": "6.x",
-    "react-app-polyfill": "3.x"
+    "tonweb": "^0.0.35"
   },
   "scripts": {
     "start": "react-scripts start",

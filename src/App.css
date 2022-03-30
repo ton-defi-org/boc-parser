@@ -2,17 +2,30 @@
   text-align: center;
 }
 
-.App-header {
-  background-color: #282c34;
+.app-main {
   min-height: 100vh;
-  display: flex;
+  
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  justify-content: left;
+  /* font-size: calc(10px + 2vmin); */
+  border: 12px dotted #ccc;
 }
-
+.flex-cntnr {
+  
+}
+.field-name {
+  max-width: 300px;
+  display: inline;
+}
+.field-value {
+  display: inline;
+  max-width: 300px;
+}
+li {
+  list-style-type: none;
+  line-height: 2;
+}
 .App-link {
   color: #61dafb;
 }

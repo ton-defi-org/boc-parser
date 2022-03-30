@@ -1,13 +1,39 @@
 body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  font-family: Helvetica, Arial, sans-serif;
+  
+  padding-top: 100px;
+  
+  padding-bottom: 100px;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+input {
+  padding: 8px;
+  
+  width: 80%;
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
+
+.title {
+  margin-top: 30px;
+}
+
+.addr {
+  margin-top: 8px;
+  font-family: monospace;
+  color: #3CA4DB;
+  word-break: break-all;
+}
+
+.img {
+  
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  width: 400px;
+  height: 400px;
+  margin-left: auto;
+  margin-right: auto;
+  background-image: url('https://ton.org/_next/static/media/duck.40264b49.png');
+}
+
