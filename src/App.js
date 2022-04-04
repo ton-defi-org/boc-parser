@@ -4,6 +4,9 @@ import BigNumber from "bignumber.js";
 import './App.css';
 import { Address } from 'ton';
 
+import TonWeb from "tonweb";
+const tonweb = new TonWeb();
+
 const Cell = require("ton").Cell
 
 function array_buffer_to_buffer(ab) {
@@ -16,13 +19,28 @@ function array_buffer_to_buffer(ab) {
 }
 
 function App() {
-    const [boc, setBoc] = useState({
-        address: 'x',
+    const initialBoc = {
+        destination: 'x',
+        wallet: '',
         amount: -1,
-        flags:'0x'
-    })
+        flags:'0x',
+        refLen: -1,
+        bocData: null
+    };
+
+    const [boc, setBoc] = useState(initialBoc);
     const file = useRef(null);
 
+    const [deploying, setDeploying] = useState(0);
+
+    var onDeploy = async (e) => {
+        e.stopPropagation();  
+        setDeploying(1);
+        await tonweb.sendBoc(boc.bocData);
+        
+        setTimeout( ()=> { setDeploying(2)}, 200);
+        setTimeout( ()=> { setDeploying(0)}, 5000);
+    }
 
     
 
@@ -36,28 +54,39 @@ function App() {
 
     function loadBoc(file) {
         const myCell = Cell.fromBoc(array_buffer_to_buffer(file));
+        const bocU8 = new Uint8Array(file);
         const slice = myCell[0].beginParse();
         let flgs = slice.readUint(7);  // flags
         // const any =  slice.readUint(2);
         const wc =  slice.readUint(8);
         const addr =  slice.readUint(256);
         let hash = addr.toArrayLike(Buffer, 'be', 32);
-        let x = new Address(wc.toNumber(), hash);
-        console.log('wallet address', x.toFriendly());
-        
+        let originWallet = new Address(wc.toNumber(), hash);
+        let flags = 0;
+        let destination = '0x';
+        let amount = 0;
+
         const cellRef = slice.readRef();
-        const flags = cellRef.readUint(6);  // flags
-        let address = cellRef.readAddress();  // destation address
-        let amount = cellRef.readCoins()   // amount
+        flags = cellRef.readUint(6).toString(16);  // flags
+
         
-        //document.getElementById('output').textContent = result;
-        
-        setBoc({
-            originWallet: x.toFriendly(),
-            flags: flags.toString(16),
-            address: address.toFriendly(),
-            amount: new BigNumber(amount.toString(10)).div(1e9).toFixed(2)
-        });
+        try {
+
+            destination = cellRef.readAddress().toFriendly();  // destation address
+            amount = cellRef.readCoins();   // amount
+        } catch(e) {
+
+        } finally {   
+            setBoc({
+                wallet: originWallet.toFriendly(),
+                destination: destination,
+                amount: new BigNumber(amount.toString(10)).div(1e9).toFixed(2),
+                refLen: cellRef.bits.length,
+                flags: flags,
+                bocData: bocU8
+            });
+        }
+    
     }
 
     function onDrop(files) {
@@ -69,34 +98,59 @@ function App() {
     }
 
     const { getRootProps, isDragActive } = useDropzone({onDrop});
-      const bocData = boc.amount > 0 ? (
-      <ul className='flex-cntnr'>  
-        <li><div className='field-name'>Source Wallet: </div>
-        <div className='field-value'>{boc.originWallet}</div></li>
-        <li><div className='field-name'>Destination Address: </div>
-        <div className='field-value'>{boc.address}</div></li>
-        <li><div className='field-name'>Amount: </div>
-        <div className='field-value'>{boc.amount}</div></li>
-        <li><div className='field-name'>Flags: </div>
-        <div className='field-value'>{boc.flags}</div></li>
-    </ul>) : (<div>
-    <span className=''> Drag Boc here</span> 
-    <input ref={file} type="file" onChange={onFileChange}></input>    
-    </div>);
+      const bocData = boc.wallet ? BocInfo(boc, ()=> { setBoc(initialBoc); }, onDeploy)
+       : (<div>
+        <span className=''> </span> 
+        <input id="file-upload" ref={file} type="file" className='file' onChange={onFileChange}></input>    
+        <label htmlFor="file-upload" className="btn">
+            <i class="fa fa-cloud-upload"></i> Custom Upload
+        </label>
+
+        </div>);    
 //  
-    return (
-        <div className="App">
+    let klass = deploying == 1 ? 'busy' : '';
+    let deployDoneMessage = null;
+    if(deploying == 2) {
+        deployDoneMessage = <div className='deploy-message'>Boc Deployment Completed</div>
+    }
+
+    return (<div className="App">
             <div className="app-main"  {...getRootProps()}>
-                <div>
-                    {bocData    }
+             <h1>Boc Parser</h1>
+             <div className='img'></div>
+                <div className={klass}>
+                    {bocData}
+                    {deployDoneMessage}
                 </div>
-                <p>
-                    
-                </p>
             </div>
-            
-        </div>
-    );
+        </div>);
 }
+
+
+const BocInfo = ( boc, onClear, onDeploy ) => {
+    
+    return (
+        <div>  
+        <div><div className='title'>Source Wallet: </div>
+        <div className='addr'>{boc.wallet}</div>
+        </div>
+        <div><div className='title'>Destination Address: </div>
+        <div className='addr'>{boc.destination}</div>
+        </div>
+        <div><div className='title'>Amount: </div>
+        <div className='addr'>{boc.amount} 💎</div>
+        </div>
+        <div><div className='title'>Flags: </div>
+        <div className='addr'>{boc.flags}</div>
+        </div>
+        <div><div className='title'>Reference bit Length: </div>
+        <div className='addr'>{boc.refLen}</div>
+        </div>
+        <br/>
+        <div className='btn btn-cancel' onClick={onClear}>Clear</div>
+        <div className='btn btn-deploy' onClick={onDeploy}>Deploy Boc</div>
+    </div>
+    )
+  };
 
 export default App;
