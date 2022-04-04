@@ -1,8 +1,11 @@
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useRef, useState, useEffect } from 'react';
 import { useDropzone } from "react-dropzone";
 import BigNumber from "bignumber.js";
 import './App.css';
 import { Address } from 'ton';
+import { parseQuery, base64ToArrayBuffer } from './utils'
+
+
 
 import TonWeb from "tonweb";
 const tonweb = new TonWeb();
@@ -28,10 +31,18 @@ function App() {
         bocData: null
     };
 
+    /** State */
     const [boc, setBoc] = useState(initialBoc);
     const file = useRef(null);
-
     const [deploying, setDeploying] = useState(0);
+
+    useEffect( ()=> {
+        let params = parseQuery(window.location.search);
+        if(params.boc) {
+            let u8Arr = base64ToArrayBuffer(params.boc);
+            loadBoc(u8Arr);
+        }
+    }, []);
 
     var onDeploy = async (e) => {
         e.stopPropagation();  
@@ -47,6 +58,7 @@ function App() {
     const onFileChange = useCallback((event) => {
                 let fr = new FileReader();
                 fr.onload = async function (e) {
+                    console.log(e.target.result);
                     loadBoc(e.target.result);
                 }
             fr.readAsArrayBuffer(file.current.files[0]);
@@ -71,7 +83,6 @@ function App() {
 
         
         try {
-
             destination = cellRef.readAddress().toFriendly();  // destation address
             amount = cellRef.readCoins();   // amount
         } catch(e) {
@@ -95,6 +106,12 @@ function App() {
             loadBoc(e.target.result);
         }
         fr.readAsArrayBuffer(files[0]);
+
+        // let b64Fr = new FileReader();
+        // b64Fr.onload = function (e) {
+        //     console.log(e.target.result);
+        // }
+        // b64Fr.readAsDataURL(files[0]);
     }
 
     const { getRootProps, isDragActive } = useDropzone({onDrop});
@@ -103,7 +120,7 @@ function App() {
         <span className=''> </span> 
         <input id="file-upload" ref={file} type="file" className='file' onChange={onFileChange}></input>    
         <label htmlFor="file-upload" className="btn">
-            <i class="fa fa-cloud-upload"></i> Custom Upload
+            <i class="fa fa-cloud-upload"></i> Upload Boc File
         </label>
 
         </div>);    
