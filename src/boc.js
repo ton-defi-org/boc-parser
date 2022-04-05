@@ -7,9 +7,9 @@ export function readExternalMessage(cell) {
 
 export function readExternalMessageD(slice) {
     slice.skip(1); //tag
-    const ihr_disabled = slice.readUint(1);
-    const bounceFlag = slice.readUint(1);
-    const bouncedFlag = slice.readUint(1);
+    const ihr_disabled = slice.readUint(1).toNumber();
+    const bounceFlag = slice.readUint(1).toNumber();
+    const bouncedFlag = slice.readUint(1).toNumber();
     slice.skip(3); //anycast address
 
 
@@ -29,16 +29,17 @@ export function readExternalMessageD(slice) {
 
 
 export function readInternalMessageD(slice) {
-    slice.skip(1); //tag
-    const internalIhr_disabled = slice.readUint(1);
-    const internalBounceFlag = slice.readUint(1);
-    const internalBouncedFlag = slice.readUint(1);
-    const destination = slice.readAddress().toFriendly();  // destnation address
+    
+    const ihrDisabled = slice.readUint(1).toNumber();
+    const bounceFlag = slice.readUint(1).toNumber();
+    const bouncedFlag = slice.readUint(1).toNumber();
+    slice.skip(3); //anycast address
+    const destination = slice.readAddress();  // destnation address
     const amount = slice.readCoins();   // amount
     return {
-        internalIhr_disabled,
-        internalBounceFlag,
-        internalBouncedFlag,
+        ihrDisabled,
+        bounceFlag,
+        bouncedFlag,
         destination,
         amount
     }

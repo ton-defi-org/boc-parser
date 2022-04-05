@@ -6,6 +6,7 @@ import { Address } from 'ton';
 import { parseQuery, base64ToArrayBuffer } from './utils'
 import  { Html5QrcodeScanner } from 'html5-qrcode'
 import TonWeb from "tonweb";
+import {readInternalMessage, readExternalMessageD, readInternalMessageD} from "./boc";
 
 const tonweb = new TonWeb();
 const Cell = require("ton").Cell;
@@ -33,11 +34,8 @@ function App() {
     /** State */
     const [boc, setBoc] = useState(initialBoc);
     const file = useRef(null);
-
     const [deploying, setDeploying] = useState(0);
-
     const [readingQR, setReadingQrMode] = useState(0);
-
     useEffect( ()=> {
         let params = parseQuery(window.location.search);
         if(params.boc) {
@@ -70,36 +68,29 @@ function App() {
         const myCell = Cell.fromBoc(array_buffer_to_buffer(file));
         const bocU8 = new Uint8Array(file);
         const slice = myCell[0].beginParse();
-        let flgs = slice.readUint(7);  // flags
-        // const any =  slice.readUint(2);
-        const wc =  slice.readUint(8);
-        const addr =  slice.readUint(256);
-        let hash = addr.toArrayLike(Buffer, 'be', 32);
-        let originWallet = new Address(wc.toNumber(), hash);
+        
+        let externalMsg = readExternalMessageD(slice)
         let flags = 0;
         let destination = '0x';
         let amount = 0;
 
-        const cellRef = slice.readRef();
-        flags = cellRef.readUint(6).toString(16);  // flags
+        const inMsgCell = slice.readRef();
+        const inMsg = readInternalMessageD(inMsgCell);
 
-        
-        try {
-            destination = cellRef.readAddress().toFriendly();  // destation address
-            amount = cellRef.readCoins();   // amount
-        } catch(e) {
+        setBoc({
+            wallet: externalMsg.targetWallet.toFriendly(),
+            destination: inMsg.destination.toFriendly(),
+            amount: new BigNumber(inMsg.amount.toString(10)).div(1e9).toFixed(2),
+            'externalIHRdisabled': externalMsg.ihr_disabled,
+            'externalBounceFlag': externalMsg.bounceFlag,
+            'externalBouncedFlag': externalMsg.bouncedFlag,
+            'internalIHRdisabled': inMsg.ihrDisabled,
+            'internalBounceFlag': inMsg.bounceFlag,
+            'internalBouncedFlag': inMsg.bouncedFlag,
+            'refLen': inMsgCell.bits.length,
+            bocData: bocU8
+        });
 
-        } finally {   
-            setBoc({
-                wallet: originWallet.toFriendly(),
-                destination: destination,
-                amount: new BigNumber(amount.toString(10)).div(1e9).toFixed(2),
-                refLen: cellRef.bits.length,
-                flags: flags,
-                bocData: bocU8
-            });
-        }
-    
     }
 
     function onDrop(files) {
@@ -111,15 +102,14 @@ function App() {
     }
 
     const { getRootProps, isDragActive } = useDropzone({onDrop});
-      const bocData = boc.wallet ? 
-        BocInfo(boc, ()=> { setBoc(initialBoc); }, onDeploy) : 
+      const bocData = boc.wallet ?  BocInfo(boc, ()=> { setBoc(initialBoc); }, onDeploy) : 
         (<div>
             <div className='btn qr-btn' onClick={(e)=> { setReadingQrMode(true); e.stopPropagation();  }}>
                  <img className='btn-2 qr-logo qr-logo-btn' src={qr_image}></img>Scan QR Code
             </div>
             <span className=''> </span> 
             <input id="file-upload" ref={file} type="file" className='file' onChange={onFileChange}></input>    
-            <label htmlFor="file-upload" className="btn ">
+            <label htmlFor="file-upload" className="btn btn-2">
                 Upload Boc File
             </label>
         </div>);    
@@ -194,8 +184,23 @@ const BocInfo = ( boc, onClear, onDeploy ) => {
         <div><div className='title'>Amount: </div>
         <div className='addr'>{boc.amount} 💎</div>
         </div>
-        <div><div className='title'>Flags: </div>
-        <div className='addr'>{boc.flags}</div>
+        <div><div className='title'>external IHRdisabled: </div>
+        <div className='addr'>{boc.externalIHRdisabled}</div>
+        </div>
+        <div><div className='title'>external BounceFlag: </div>
+        <div className='addr'>{boc.externalBounceFlag}</div>
+        </div>
+        <div><div className='title'>external Bounced Flag: </div>
+        <div className='addr'>{boc.externalBouncedFlag}</div>
+        </div>
+        <div><div className='title'>internal Ihr_disabled: </div>
+        <div className='addr'>{boc.internalIHRdisabled}</div>
+        </div>
+        <div><div className='title'>internal BounceFlag: </div>
+        <div className='addr'>{boc.internalBouncedFlag}</div>
+        </div>
+        <div><div className='title'>internal  Bounced Flag: </div>
+        <div className='addr'>{boc.internalBounceFlag}</div>
         </div>
         <div><div className='title'>Reference bit Length: </div>
         <div className='addr'>{boc.refLen}</div>
