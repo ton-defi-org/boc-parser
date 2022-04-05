@@ -48,6 +48,19 @@ input {
   color: #fff;
   border-radius: 7px;
 }
+.drop-zone {
+  width: 400px;
+  height: 200px;
+  border: dotted #aaa;
+  margin: auto;
+  margin-bottom: 20px;
+}
+
+.drop-zone::before {
+  content: "Drop Boc Here";
+  position: relative;
+  top:100px;
+}
 
 .btn-cancel {
   background-color: rgb(231, 65, 65);
@@ -73,4 +86,23 @@ input {
   font-size: 14px;
   padding: 2px 8px;
   border: 1px solid #ccc;
+}
+
+#qr-reader {
+  width: 400px;
+  margin: 10px auto;
+}
+.qr-logo {
+  height: 20px;
+  position: relative;
+  top:2px;
+  padding-right: 10px;
+}
+
+.qr-logo-btn {
+  height: 18px;
+}
+
+.btn-2 {
+  /* height: 20px !important; */
 }
