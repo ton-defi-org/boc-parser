@@ -49,9 +49,9 @@ export function readInternalMessageD(slice) {
 export function readInternalMessage(slice) {
     
     slice.skip(1);
-    const ihrDisabled = slice.readUint();
-    const bounce = slice.readUint();
-    const bounced = slice.readUint();
+    const ihrDisabled = slice.readUint(1).toNumber();
+    const bounce = slice.readUint(1).toNumber();
+    const bounced = slice.readUint(1).toNumber();
     const from = slice.readAddress();
     const to = slice.readAddress();
     const value = slice.writeCoins();
