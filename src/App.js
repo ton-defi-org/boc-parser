@@ -70,16 +70,16 @@ function App() {
         const slice = myCell[0].beginParse();
         
         let externalMsg = readExternalMessageD(slice)
-        let flags = 0;
-        let destination = '0x';
-        let amount = 0;
-
+        
         const inMsgCell = slice.readRef();
-        const inMsg = readInternalMessageD(inMsgCell);
+        let inMsg = { amount: new BigNumber(0), ihrDisabled: '', bounceFlag :'', bouncedFlag: '', destination: 'kf-'};
+        try {
+            inMsg = readInternalMessageD(inMsgCell);
+        } catch(e) {}
 
         setBoc({
             wallet: externalMsg.targetWallet.toFriendly(),
-            destination: inMsg.destination.toFriendly(),
+            destination: inMsg.destination,
             amount: new BigNumber(inMsg.amount.toString(10)).div(1e9).toFixed(2),
             'externalIHRdisabled': externalMsg.ihr_disabled,
             'externalBounceFlag': externalMsg.bounceFlag,
