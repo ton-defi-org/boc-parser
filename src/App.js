@@ -184,11 +184,8 @@ const BocInfo = ( boc, onClear, onDeploy ) => {
         <div><div className='title'>Transfer Amount: </div>
         <div className='addr'>{boc.amount} TON 💎</div>
         </div>
-        <div><div className='title'>External Flags: </div>
-        <div className='addr'>IHR-Disabled={boc.externalIHRdisabled}, Bounce={boc.externalBounceFlag}, Bounced={boc.externalBouncedFlag}</div>
-        </div>
         <div><div className='title'>Internal Flags: </div>
-        <div className='addr'>IHR-Disabled={boc.internalIHRdisabled}, Bounce={boc.internalBounceFlag}, Bounced={boc.internalBouncedFlag}</div>
+        <div className='addr'>Bounce={boc.internalBounceFlag}</div>
         </div>
         <div><div className='title'>Reference bit Length: </div>
         <div className='addr'>{boc.refLen}</div>
