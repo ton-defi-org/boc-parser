@@ -181,33 +181,25 @@ const BocInfo = ( boc, onClear, onDeploy ) => {
         <div><div className='title'>Destination Address: </div>
         <div className='addr'>{boc.destination}</div>
         </div>
-        <div><div className='title'>Amount: </div>
-        <div className='addr'>{boc.amount} 💎</div>
+        <div><div className='title'>Transfer Amount: </div>
+        <div className='addr'>{boc.amount} TON 💎</div>
         </div>
-        <div><div className='title'>external IHRdisabled: </div>
-        <div className='addr'>{boc.externalIHRdisabled}</div>
+        <div><div className='title'>External Flags: </div>
+        <div className='addr'>IHR-Disabled {boc.externalIHRdisabled}</div>
+        <div className='addr'>Bounce {boc.externalBounceFlag}</div>
+        <div className='addr'>Bounced {boc.externalBouncedFlag}</div>
         </div>
-        <div><div className='title'>external BounceFlag: </div>
-        <div className='addr'>{boc.externalBounceFlag}</div>
-        </div>
-        <div><div className='title'>external Bounced Flag: </div>
-        <div className='addr'>{boc.externalBouncedFlag}</div>
-        </div>
-        <div><div className='title'>internal Ihr_disabled: </div>
-        <div className='addr'>{boc.internalIHRdisabled}</div>
-        </div>
-        <div><div className='title'>internal BounceFlag: </div>
-        <div className='addr'>{boc.internalBouncedFlag}</div>
-        </div>
-        <div><div className='title'>internal  Bounced Flag: </div>
-        <div className='addr'>{boc.internalBounceFlag}</div>
+        <div><div className='title'>Internal Flags: </div>
+        <div className='addr'>IHR-Disabled {boc.internalIHRdisabled}</div>
+        <div className='addr'>Bounce {boc.internalBounceFlag}</div>
+        <div className='addr'>Bounced {boc.internalBouncedFlag}</div>
         </div>
         <div><div className='title'>Reference bit Length: </div>
         <div className='addr'>{boc.refLen}</div>
         </div>
         <br/>
         <div className='btn btn-cancel' onClick={onClear}>Clear</div>
-        <div className='btn btn-deploy' onClick={onDeploy}>Deploy Boc</div>
+        <div className='btn btn-deploy' onClick={onDeploy}>Send Boc to Mainnet</div>
     </div>
     )
   };
