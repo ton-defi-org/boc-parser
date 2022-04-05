@@ -72,7 +72,7 @@ function App() {
         let externalMsg = readExternalMessageD(slice)
         
         const inMsgCell = slice.readRef();
-        let inMsg = { amount: new BigNumber(0), ihrDisabled: '', bounceFlag :'', bouncedFlag: '', destination: 'kf-'};
+        let inMsg = { amount: new BigNumber(0), ihrDisabled: '', bounceFlag :'', bouncedFlag: '', destination: '-'};
         try {
             inMsg = readInternalMessageD(inMsgCell);
         } catch(e) {}

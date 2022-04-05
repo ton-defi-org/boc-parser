@@ -34,7 +34,7 @@ export function readInternalMessageD(slice) {
     const bounceFlag = slice.readUint(1).toNumber();
     const bouncedFlag = slice.readUint(1).toNumber();
     slice.skip(3); //anycast address
-    const destination = slice.readAddress();  // destnation address
+    const destination = slice.readAddress().toFriendly();  // destnation address
     const amount = slice.readCoins();   // amount
     return {
         ihrDisabled,
