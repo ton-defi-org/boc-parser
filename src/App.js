@@ -80,7 +80,7 @@ function App() {
         setBoc({
             wallet: externalMsg.targetWallet.toFriendly(),
             destination: inMsg.destination,
-            amount: new BigNumber(inMsg.amount.toString(10)).div(1e9).toFixed(2),
+            amount: new BigNumber(inMsg.amount.toString(10)).div(1e9).toFormat(4),
             'externalIHRdisabled': externalMsg.ihr_disabled,
             'externalBounceFlag': externalMsg.bounceFlag,
             'externalBouncedFlag': externalMsg.bouncedFlag,
