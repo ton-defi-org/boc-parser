@@ -21,6 +21,7 @@ function array_buffer_to_buffer(ab) {
     return buffer;
 }
 
+
 function App() {
     const initialBoc = {
         destination: 'x',
@@ -28,7 +29,8 @@ function App() {
         amount: -1,
         flags:'0x',
         refLen: -1,
-        bocData: null
+        bocData: null,
+        error: '',
     };
 
     /** State */
@@ -53,26 +55,37 @@ function App() {
         setTimeout( ()=> { setDeploying(0)}, 5000);
     }
 
-    
-
     const onFileChange = useCallback((event) => {
                 let fr = new FileReader();
                 fr.onload = async function (e) {
                     console.log(e.target.result);
-                    loadBoc(e.target.result);
+                    loadBoc(e.target.result, file.current.files[0]);
                 }
             fr.readAsArrayBuffer(file.current.files[0]);
     }, []);
 
-    function loadBoc(file) {
-        const myCell = Cell.fromBoc(array_buffer_to_buffer(file));
-        const bocU8 = new Uint8Array(file);
-        const slice = myCell[0].beginParse();
+    function loadBoc(fileBuffer, fileObject) {
+        if(fileObject.name.indexOf('.boc') === -1 ) {
+            setBoc({
+                error:'Invalid file name, file must have the *.boc extention'
+            })
+            return;
+        }
+        if(fileBuffer.byteLength < 100) {
+            setBoc({
+                error:'Invalid file size, boc file should be larger than 100 bytes'
+            })
+            return;
+        }
+        const myCell = Cell.fromBoc(array_buffer_to_buffer(fileBuffer));
+        const bocU8 = new Uint8Array(fileBuffer);
         
+        const slice = myCell[0].beginParse();
         let externalMsg = readExternalMessageD(slice)
         
         const inMsgCell = slice.readRef();
         let inMsg = { amount: new BigNumber(0), ihrDisabled: '', bounceFlag :'', bouncedFlag: '', destination: '-'};
+
         try {
             inMsg = readInternalMessageD(inMsgCell);
         } catch(e) {}
@@ -81,13 +94,13 @@ function App() {
             wallet: externalMsg.targetWallet.toFriendly(),
             destination: inMsg.destination,
             amount: new BigNumber(inMsg.amount.toString(10)).div(1e9).toFormat(4),
-            'externalIHRdisabled': externalMsg.ihr_disabled,
-            'externalBounceFlag': externalMsg.bounceFlag,
-            'externalBouncedFlag': externalMsg.bouncedFlag,
-            'internalIHRdisabled': inMsg.ihrDisabled,
-            'internalBounceFlag': inMsg.bounceFlag,
-            'internalBouncedFlag': inMsg.bouncedFlag,
-            'refLen': inMsgCell.bits.length,
+            externalIHRdisabled: externalMsg.ihr_disabled,
+            externalBounceFlag: externalMsg.bounceFlag,
+            externalBouncedFlag: externalMsg.bouncedFlag,
+            internalIHRdisabled: inMsg.ihrDisabled,
+            internalBounceFlag: inMsg.bounceFlag,
+            internalBouncedFlag: inMsg.bouncedFlag,
+            refLen: inMsgCell.bits.length,
             bocData: bocU8
         });
 
@@ -96,24 +109,23 @@ function App() {
     function onDrop(files) {
         let fr = new FileReader();
         fr.onload = async function (e) {
-            loadBoc(e.target.result);
+            loadBoc(e.target.result, files[0]);
         }
         fr.readAsArrayBuffer(files[0]);
     }
 
+
     const { getRootProps, isDragActive } = useDropzone({onDrop});
-      const bocData = boc.wallet ?  BocInfo(boc, ()=> { setBoc(initialBoc); }, onDeploy) : 
+    const bocData = boc.wallet ?  BocInfo(boc, ()=> { setBoc(initialBoc); }, onDeploy) : 
         (<div>
             <div className='btn qr-btn' onClick={(e)=> { setReadingQrMode(true); e.stopPropagation();  }}>
                  <img className='btn-2 qr-logo qr-logo-btn' src={qr_image}></img>Scan QR Code
             </div>
             <span className=''> </span> 
             <input id="file-upload" ref={file} type="file" className='file' onChange={onFileChange}></input>    
-            <label htmlFor="file-upload" className="btn btn-2">
-                Upload Boc File
-            </label>
+            <label htmlFor="file-upload" className="btn btn-2">Upload Boc File</label>
         </div>);    
-//  
+  
     let klass = deploying == 1 ? 'busy' : '';
     let deployDoneMessage = null;
     if(deploying == 2) {
@@ -123,7 +135,6 @@ function App() {
     let qrReader = null;
     if(readingQR) {
         qrReader = (<QrReader onDone={onQrRead} />)
-     //   dropArea = null;
     } else {
         qrReader = null;
     }
@@ -136,18 +147,20 @@ function App() {
 
     const dropArea = readingQR || boc.bocData ? null : (<div className='drop-zone' {...getRootProps()}></div>)
 
-    return (<div className="App">
-            <div className="app-main"  >
-             <h1>Boc Parser</h1> 
-             <div className='img'></div>
-                <div className={klass}>
-                    {dropArea}
-                    {qrReader}
-                    {bocData}
-                    {deployDoneMessage}
-                </div>
+    return (
+    <div className="App">
+        <div className="app-main">
+            <h1>Boc Parser</h1> 
+            <div className='img'></div>
+            <div className={klass}>
+                <div className='boc-error'>{boc.error}</div>
+                {dropArea}
+                {qrReader}
+                {bocData}
+                {deployDoneMessage}
             </div>
-        </div>);
+        </div>
+    </div>);
 }
 
 const QrReader = ( props ) => {

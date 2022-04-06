@@ -1,9 +1,4 @@
-import { Address, Cell } from 'ton';
-
-export function readExternalMessage(cell) {
-    
-}
-
+import { Address } from 'ton';
 
 export function readExternalMessageD(slice) {
     slice.skip(1); //tag
@@ -12,8 +7,6 @@ export function readExternalMessageD(slice) {
     const bouncedFlag = slice.readUint(1).toNumber();
     slice.skip(3); //anycast address
 
-
-    // const any =  slice.readUint(2);
     const wc =  slice.readUint(8);
     const addr =  slice.readUint(256);
     
@@ -45,30 +38,5 @@ export function readInternalMessageD(slice) {
         bouncedFlag,
         destination,
         amount
-    }
-}
-
-//tonwhales 
-export function readInternalMessage(slice) {
-    
-    slice.skip(1);
-    const ihrDisabled = slice.readUint(1).toNumber();
-    const bounce = slice.readUint(1).toNumber();
-    const bounced = slice.readUint(1).toNumber();
-    const from = slice.readAddress();
-    const to = slice.readAddress();
-    const value = slice.writeCoins();
-    slice.skip(1);
-    const ihrFees = slice.writeCoins();
-    const fwdFees = slice.writeCoins();
-    
-    return {
-        ihrDisabled,
-        bounce,
-        bounced,
-        from,
-        to,
-        value,
-        
     }
 }

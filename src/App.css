@@ -106,3 +106,8 @@ input {
 .btn-2 {
   /* height: 20px !important; */
 }
+
+.boc-error {
+  color: crimson;
+  padding: 10px;
+}
