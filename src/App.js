@@ -142,7 +142,7 @@ function App() {
     function onQrRead(data) {
         setReadingQrMode(false);
         let u8Arr = base64ToArrayBuffer(data);
-        loadBoc(u8Arr);
+        loadBoc(u8Arr, {name:'qr.boc'});
     }   
 
     const dropArea = readingQR || boc.bocData ? null : (<div className='drop-zone' {...getRootProps()}></div>)
@@ -164,7 +164,12 @@ function App() {
 }
 
 const QrReader = ( props ) => {
+    let once = false;
     function onScanSuccess(decodedText, decodedResult) {
+        if(once) {
+            return;
+        }
+        once = true;
         console.log('onScanSuccess',decodedText)
         props.onDone(decodedText)
     }
